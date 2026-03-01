@@ -3,12 +3,16 @@ import axios from 'axios';
 
 function App() {
   const defaultDate = new Date().toISOString().slice(0, 10);
+  const defaultMorningStart = '08:30';
+  const defaultMorningEnd = '12:30';
+  const defaultAfternoonStart = '13:30';
+  const defaultAfternoonEnd = '17:00';
   const [entry, setEntry] = useState({
     date: defaultDate,
-    morningStart: '',
-    morningEnd: '',
-    afternoonStart: '',
-    afternoonEnd: '',
+    morningStart: defaultMorningStart,
+    morningEnd: defaultMorningEnd,
+    afternoonStart: defaultAfternoonStart,
+    afternoonEnd: defaultAfternoonEnd,
     comment: '',
     tasks: ''
   });
@@ -58,10 +62,10 @@ function App() {
       }
       setEntry({
         date: defaultDate,
-        morningStart: '',
-        morningEnd: '',
-        afternoonStart: '',
-        afternoonEnd: '',
+        morningStart: defaultMorningStart,
+        morningEnd: defaultMorningEnd,
+        afternoonStart: defaultAfternoonStart,
+        afternoonEnd: defaultAfternoonEnd,
         comment: '',
         tasks: ''
       });
@@ -76,10 +80,10 @@ function App() {
   const handleEdit = (item) => {
     setEntry({
       date: item.date.slice(0,10),
-      morningStart: item.morning_start || '',
-      morningEnd: item.morning_end || '',
-      afternoonStart: item.afternoon_start || '',
-      afternoonEnd: item.afternoon_end || '',
+      morningStart: item.morning_start || defaultMorningStart,
+      morningEnd: item.morning_end || defaultMorningEnd,
+      afternoonStart: item.afternoon_start || defaultAfternoonStart,
+      afternoonEnd: item.afternoon_end || defaultAfternoonEnd,
       comment: item.comment || '',
       tasks: item.tasks || ''
     });
@@ -151,7 +155,7 @@ function App() {
           <label>Tasks:<br /><textarea name="tasks" value={entry.tasks} onChange={handleChange} /></label>
         </div>
         <button type="submit">{editingId ? 'Update' : 'Save'}</button>
-        {editingId && <button type="button" onClick={() => {setEditingId(null); setEntry({date: defaultDate, morningStart:'',morningEnd:'',afternoonStart:'',afternoonEnd:'',comment:'',tasks:''});}}>Cancel</button>}
+        {editingId && <button type="button" onClick={() => {setEditingId(null); setEntry({date: defaultDate, morningStart:defaultMorningStart,morningEnd:defaultMorningEnd,afternoonStart:defaultAfternoonStart,afternoonEnd:defaultAfternoonEnd,comment:'',tasks:''});}}>Cancel</button>}
       </form>
 
       <h2>Entries</h2>
@@ -175,7 +179,7 @@ function App() {
         <tbody>
           {entries.map((item) => (
             <tr key={item.id}>
-              <td>{item.date.slice(0,10)}</td>
+              <td>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' })} {item.date.slice(0,10)}</td>
               <td>{item.morning_start || ''} - {item.morning_end || ''}</td>
               <td>{item.afternoon_start || ''} - {item.afternoon_end || ''}</td>
               <td>{formatDuration(dailyMinutes(item))}</td>

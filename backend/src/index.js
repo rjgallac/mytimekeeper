@@ -58,7 +58,7 @@ app.get('/api/entries', async (req, res) => {
       params.push(start, end);
       query += ' WHERE date >= $1 AND date <= $2';
     }
-    query += ' ORDER BY date DESC';
+    query += ' ORDER BY date ASC';
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {

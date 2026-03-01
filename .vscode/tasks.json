@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "backend: install",
+      "type": "shell",
+      "command": "cd backend && npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "backend: dev",
+      "type": "shell",
+      "command": "cd backend && npm run dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "frontend: install",
+      "type": "shell",
+      "command": "cd frontend && npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "frontend: dev",
+      "type": "shell",
+      "command": "cd frontend && npm run dev",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

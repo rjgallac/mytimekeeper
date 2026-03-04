@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Label } from '@/components/ui/label.jsx'
@@ -21,7 +21,7 @@ function App() {
   const [editingId, setEditingId] = useState(null)
   const [weekStart, setWeekStart] = useState(new Date().toISOString().split('T')[0])
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       if (editingId) {
@@ -29,9 +29,6 @@ function App() {
       } else {
         await axios.post('/api/entries', entry)
       }
-      // Refresh entries
-      const response = await axios.get('/api/entries')
-      setEntries(response.data)
       setEntry({
         date: new Date().toISOString().split('T')[0],
         morningStart: '09:00',
@@ -47,7 +44,14 @@ function App() {
     }
   }
 
-  const handleEdit = (item) => {
+useEffect(() => {
+    const weekEnd = new Date(new Date(weekStart).getTime() + 6 * 24 * 60 * 60 * 1000);
+    axios.get('/api/entries', { params: { start: weekStart, end: weekEnd.toISOString().split('T')[0] } })
+      .then(response => setEntries(response.data))
+      .catch(err => console.error('Error fetching entries:', err));
+  }, [weekStart]);
+
+const handleEdit = (item) => {
     setEntry({
       date: item.date.slice(0, 10),
       morningStart: item.morning_start || '09:00',
@@ -60,7 +64,7 @@ function App() {
     setEditingId(item.id)
   }
 
-  const handleDelete = async (id) => {
+const handleDelete = async (id) => {
     if (!window.confirm('Delete this entry?')) return;
     try {
       await axios.delete(`/api/entries/${id}`)
@@ -70,28 +74,28 @@ function App() {
     }
   }
 
-  const diffMinutes = (start, end) => {
+const diffMinutes = (start, end) => {
     if (!start || !end) return 0;
     const [h1,m1]=start.split(':').map(Number);
     const [h2,m2]=end.split(':').map(Number);
     return (h2*60+m2) - (h1*60+m1);
   }
 
-  const dailyMinutes = (item) => {
+const dailyMinutes = (item) => {
     const m1 = diffMinutes(item.morning_start, item.morning_end);
     const m2 = diffMinutes(item.afternoon_start, item.afternoon_end);
     return m1 + m2;
   }
 
-  const formatDuration = (mins) => {
+const formatDuration = (mins) => {
     const h = Math.floor(mins/60);
     const m = mins % 60;
     return `${h}h ${m}m`;
   }
 
-  const weekTotal = entries.reduce((sum, it) => sum + dailyMinutes(it), 0);
+const weekTotal = entries.reduce((sum, it) => sum + dailyMinutes(it), 0);
 
-  const prevWeek = () => {
+const prevWeek = () => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() - 7);
     setWeekStart(d.toISOString().split('T')[0]);

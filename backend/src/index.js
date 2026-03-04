@@ -1,8 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Database pool
@@ -102,7 +104,68 @@ app.delete('/api/entries/:id', async (req, res) => {
   }
 });
 
-// More routes (get entries, update, etc.) can be added later
+// Get weekly hours summary for a specific week
+app.get('/api/weekly-summary', async (req, res) => {
+  try {
+    const { start } = req.query; // expect YYYY-MM-DD for Sunday
+    if (!start) {
+      return res.status(400).json({ error: 'Start date required' });
+    }
+
+    const result = await pool.query(
+      `SELECT 
+        SUM(EXTRACT(EPOCH FROM (morning_end - morning_start))/3600) as morning_hours,
+        SUM(EXTRACT(EPOCH FROM (afternoon_end - afternoon_start))/3600) as afternoon_hours
+       FROM entries
+       WHERE date >= $1 AND date < DATE($1 + INTERVAL '7 days')`,
+      [start]
+    );
+
+    const totalHours = parseFloat(result.rows[0].morning_hours || 0) + 
+                       parseFloat(result.rows[0].afternoon_hours || 0);
+
+    res.json({ start, totalHours });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Get yearly summary for all weeks in the year
+app.get('/api/yearly-summary', async (req, res) => {
+  try {
+    const { year } = req.query; // expect YYYY
+    if (!year || !/^\d{4}$/.test(year)) {
+      return res.status(400).json({ error: 'Valid year required' });
+    }
+
+    const startDate = `${year}-01-01`;
+    const endDate = `${year}-12-31`;
+
+    const result = await pool.query(
+      `SELECT 
+        date_trunc('week', date) as week_start,
+        SUM(EXTRACT(EPOCH FROM (morning_end - morning_start))/3600) as morning_hours,
+        SUM(EXTRACT(EPOCH FROM (afternoon_end - afternoon_start))/3600) as afternoon_hours
+       FROM entries
+       WHERE date >= $1 AND date <= $2
+       GROUP BY week_start
+       ORDER BY week_start ASC`,
+      [startDate, endDate]
+    );
+
+    const weeklyData = {};
+    result.rows.forEach(row => {
+      weeklyData[row.week_start] = parseFloat(row.morning_hours || 0) + 
+                                   parseFloat(row.afternoon_hours || 0);
+    });
+
+    res.json({ year, weeklyHours: weeklyData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

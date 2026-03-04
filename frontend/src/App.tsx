@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import TimeEntryForm from '@/components/form/TimeEntryForm'
 import TimeEntriesList from '@/components/list/TimeEntriesList'
+import YearlyProgress from '@/components/YearlyProgress'
+import WeeklyProgress from '@/components/WeeklyProgress'
 import { useForm } from '@/hooks/useForm'
 import { useEntries } from '@/hooks/useEntries'
 import { FormHookResult, EntriesHookResult, TimeEntry } from '@/types'
@@ -54,6 +56,9 @@ const App: React.FC = () => {
           <CardDescription>Track your daily hours and manage your time effectively</CardDescription>
         </CardHeader>
         <CardContent>
+          <YearlyProgress year={new Date(weekStart).getFullYear()} />
+          <WeeklyProgress weekStart={weekStart} />
+
           <TimeEntryForm 
             entry={entry}
             setEntry={setEntry}

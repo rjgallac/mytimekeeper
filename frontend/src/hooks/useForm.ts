@@ -1,11 +1,8 @@
 import { useState, useCallback } from 'react'
+import { TimeEntryFormState, FormHookResult, TimeEntry } from '@/types'
 
-/**
- * Custom hook for managing time entry form state and validation
- * @returns {Object} Form state and handlers
- */
-export const useForm = () => {
-  const [entry, setEntry] = useState({
+export const useForm = (): FormHookResult => {
+  const [entry, setEntry] = useState<TimeEntryFormState>({
     date: new Date().toISOString().split('T')[0],
     morningStart: '09:00',
     morningEnd: '12:00',
@@ -14,7 +11,7 @@ export const useForm = () => {
     comment: '',
     tasks: ''
   })
-  const [editingId, setEditingId] = useState(null)
+  const [editingId, setEditingId] = useState<number | null>(null)
 
   const resetForm = useCallback(() => {
     setEntry({
@@ -29,7 +26,7 @@ export const useForm = () => {
     setEditingId(null)
   }, [])
 
-  const handleEdit = useCallback((item) => {
+  const handleEdit = useCallback((item: TimeEntry) => {
     setEntry({
       date: item.date.slice(0, 10),
       morningStart: item.morning_start || '09:00',
@@ -39,7 +36,7 @@ export const useForm = () => {
       comment: item.comment || '',
       tasks: item.tasks || ''
     })
-    setEditingId(item.id)
+    setEditingId(item.id ?? null)
   }, [])
 
   return { entry, setEntry, editingId, setEditingId, resetForm, handleEdit }

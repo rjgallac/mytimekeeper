@@ -1,21 +1,19 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import TimeEntryForm from '@/components/form/TimeEntryForm'
 import TimeEntriesList from '@/components/list/TimeEntriesList'
 import { useForm } from '@/hooks/useForm'
 import { useEntries } from '@/hooks/useEntries'
+import { FormHookResult, EntriesHookResult, TimeEntry } from '@/types'
 
-/**
- * Main application component - orchestrates form and list components
- */
-function App() {
-  const [weekStart, setWeekStart] = useState(new Date().toISOString().split('T')[0])
+const App: React.FC = () => {
+  const [weekStart, setWeekStart] = useState<string>(new Date().toISOString().split('T')[0])
   
-  const { entry, setEntry, editingId, setEditingId, resetForm, handleEdit } = useForm()
-  const { entries, loading, addEntry, updateEntry, deleteEntry } = useEntries(weekStart)
+  const { entry, setEntry, editingId, setEditingId, resetForm, handleEdit }: FormHookResult = useForm()
+  const { entries, loading, addEntry, updateEntry, deleteEntry }: EntriesHookResult = useEntries(weekStart)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       if (editingId) {
@@ -29,21 +27,12 @@ function App() {
     }
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm('Delete this entry?')) return
     try {
       await deleteEntry(id)
     } catch (error) {
       console.error('Delete failed:', error)
-    }
-  }
-
-  const handleWeekChange = async (direction) => {
-    try {
-      const newDate = await window.navigateWeek(direction)
-      setWeekStart(newDate)
-    } catch (error) {
-      console.error('Error navigating week:', error)
     }
   }
 
@@ -60,8 +49,8 @@ function App() {
         </CardHeader>
         <CardContent>
           <TimeEntryForm 
-            entry={entry} 
-            setEntry={setEntry} 
+            entry={entry}
+            setEntry={setEntry}
             editingId={editingId}
             setEditingId={setEditingId}
             handleSubmit={handleSubmit}

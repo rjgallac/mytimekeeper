@@ -1,13 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
+import { TimeEntry, TimeEntryFormState, EntriesHookResult } from '@/types'
 
-/**
- * Custom hook for fetching and managing time entries with week navigation
- * @param {string} weekStart - The start date of the current week (ISO format)
- * @returns {Object} Entries state, loading status, and navigation handlers
- */
-export const useEntries = (weekStart) => {
-  const [entries, setEntries] = useState([])
+export const useEntries = (weekStart: string): EntriesHookResult => {
+  const [entries, setEntries] = useState<TimeEntry[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -15,7 +11,7 @@ export const useEntries = (weekStart) => {
       try {
         setLoading(true)
         const weekEnd = new Date(new Date(weekStart).getTime() + 6 * 24 * 60 * 60 * 1000)
-        const response = await axios.get('/api/entries', {
+        const response = await axios.get<TimeEntry[]>('/api/entries', {
           params: { start: weekStart, end: weekEnd.toISOString().split('T')[0] }
         })
         setEntries(response.data)
@@ -29,27 +25,27 @@ export const useEntries = (weekStart) => {
     fetchEntries()
   }, [weekStart])
 
-  const addEntry = async (entryData) => {
+  const addEntry = useCallback(async (entryData: TimeEntryFormState) => {
     try {
-      const response = await axios.post('/api/entries', entryData)
-      setEntries((prev) => [...prev, response.data])
+      await axios.post<TimeEntry>('/api/entries', entryData)
+      setEntries((prev) => [...prev, entryData as TimeEntry])
     } catch (error) {
       console.error('Error saving entry:', error)
       throw error
     }
-  }
+  }, [])
 
-  const updateEntry = async (id, entryData) => {
+  const updateEntry = useCallback(async (id: number, entryData: TimeEntryFormState) => {
     try {
-      await axios.put(`/api/entries/${id}`, entryData)
+      await axios.put<TimeEntry>(`/api/entries/${id}`, entryData)
       setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...entryData } : e)))
     } catch (error) {
       console.error('Error updating entry:', error)
       throw error
     }
-  }
+  }, [])
 
-  const deleteEntry = async (id) => {
+  const deleteEntry = useCallback(async (id: number) => {
     try {
       await axios.delete(`/api/entries/${id}`)
       setEntries((prev) => prev.filter((e) => e.id !== id))
@@ -57,19 +53,7 @@ export const useEntries = (weekStart) => {
       console.error('Delete failed:', error)
       throw error
     }
-  }
+  }, [])
 
-  const navigateWeek = useCallback((direction) => {
-    return new Promise((resolve) => {
-      const d = new Date(weekStart)
-      if (direction === 'prev') {
-        d.setDate(d.getDate() - 7)
-      } else {
-        d.setDate(d.getDate() + 7)
-      }
-      resolve(d.toISOString().split('T')[0])
-    })
-  }, [weekStart])
-
-  return { entries, loading, addEntry, updateEntry, deleteEntry, navigateWeek }
+  return { entries, loading, addEntry, updateEntry, deleteEntry }
 }

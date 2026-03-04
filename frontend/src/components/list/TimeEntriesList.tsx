@@ -1,28 +1,23 @@
 import React from 'react'
-import { Button } from '@/components/ui/button.jsx'
+import { Button } from '@/components/ui/button'
+import { diffMinutes, dailyMinutes, formatDuration } from '@/utils/timeHelpers'
+import { TimeEntry } from '@/types'
 
-function TimeEntriesList({ entries, weekStart, setWeekStart, handleEdit, handleDelete }) {
-  const diffMinutes = (start, end) => {
-    if (!start || !end) return 0
-    const [h1, m1] = start.split(':').map(Number)
-    const [h2, m2] = end.split(':').map(Number)
-    return (h2 * 60 + m2) - (h1 * 60 + m1)
-  }
+interface TimeEntriesListProps {
+  entries: TimeEntry[]
+  weekStart: string
+  setWeekStart: React.Dispatch<React.SetStateAction<string>>
+  handleEdit: (item: TimeEntry) => void
+  handleDelete: (id: number) => Promise<void>
+}
 
-  const dailyMinutes = (item) => {
-    const m1 = diffMinutes(item.morning_start, item.morning_end)
-    const m2 = diffMinutes(item.afternoon_start, item.afternoon_end)
-    return m1 + m2
-  }
-
-  const formatDuration = (mins) => {
-    const h = Math.floor(mins / 60)
-    const m = mins % 60
-    return `${h}h ${m}m`
-  }
-
-  const weekTotal = entries.reduce((sum, it) => sum + dailyMinutes(it), 0)
-
+const TimeEntriesList: React.FC<TimeEntriesListProps> = ({ 
+  entries, 
+  weekStart, 
+  setWeekStart, 
+  handleEdit, 
+  handleDelete 
+}) => {
   const prevWeek = () => {
     const d = new Date(weekStart)
     d.setDate(d.getDate() - 7)
@@ -34,6 +29,8 @@ function TimeEntriesList({ entries, weekStart, setWeekStart, handleEdit, handleD
     d.setDate(d.getDate() + 7)
     setWeekStart(d.toISOString().split('T')[0])
   }
+
+  const weekTotal = entries.reduce((sum, it) => sum + dailyMinutes(it), 0)
 
   return (
     <div className="mt-8">
@@ -58,8 +55,8 @@ function TimeEntriesList({ entries, weekStart, setWeekStart, handleEdit, handleD
             </tr>
           </thead>
           <tbody>
-            {entries.map((item) => (
-              <tr key={item.id} className="border-b hover:bg-accent">
+            {entries.map((item: TimeEntry, index: number) => (
+              <tr key={item.id ?? `temp-${index}-${item.date}`} className="border-b hover:bg-accent">
                 <td className="py-2 px-4">
                   {new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' })} 
                   {item.date.slice(0, 10)}
@@ -73,25 +70,15 @@ function TimeEntriesList({ entries, weekStart, setWeekStart, handleEdit, handleD
                 <td className="py-2 px-4">
                   {formatDuration(dailyMinutes(item))}
                 </td>
-                <td className="py-2 px-4">
-                  {item.comment}
-                </td>
-                <td className="py-2 px-4">
-                  {item.tasks}
-                </td>
+                <td className="py-2 px-4">{item.comment}</td>
+                <td className="py-2 px-4">{item.tasks}</td>
                 <td className="py-2 px-4">
                   <div className="flex gap-2">
+                    <Button onClick={() => handleEdit(item)} variant="ghost" size="sm">Edit</Button>
                     <Button 
-                      onClick={() => handleEdit(item)} 
+                      onClick={() => item.id && handleDelete(item.id)} 
                       variant="ghost" 
-                      size="sm"
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      onClick={() => handleDelete(item.id)} 
-                      variant="ghost" 
-                      size="sm"
+                      size="sm" 
                       className="text-destructive hover:text-destructive"
                     >
                       Delete
@@ -103,12 +90,8 @@ function TimeEntriesList({ entries, weekStart, setWeekStart, handleEdit, handleD
           </tbody>
           <tfoot>
             <tr className="border-t bg-muted">
-              <td colSpan="3" className="py-2 px-4 font-semibold">
-                Weekly total
-              </td>
-              <td className="py-2 px-4 font-semibold">
-                {formatDuration(weekTotal)}
-              </td>
+              <td colSpan="3" className="py-2 px-4 font-semibold">Weekly total</td>
+              <td className="py-2 px-4 font-semibold">{formatDuration(weekTotal)}</td>
               <td colSpan="3"></td>
             </tr>
           </tfoot>

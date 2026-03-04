@@ -1,14 +1,24 @@
 import React from 'react'
-import { Button } from '@/components/ui/button.jsx'
-import { CardContent } from '@/components/ui/card.jsx'
-import { Label } from '@/components/ui/label.jsx'
-import { Input } from '@/components/ui/input.jsx'
-import { Textarea } from '@/components/ui/textarea.jsx'
+import { Button } from '@/components/ui/button'
+import { CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { TimeEntryFormState, FormHookResult } from '@/types'
 
-/**
- * Form component for creating and editing time entries
- */
-const TimeEntryForm = ({ entry, setEntry, editingId, setEditingId, handleSubmit }) => (
+interface TimeEntryFormProps extends Omit<FormHookResult, 'setEntry' | 'setEditingId'> {
+  setEntry: React.Dispatch<React.SetStateAction<TimeEntryFormState>>
+  setEditingId: React.Dispatch<React.SetStateAction<number | null>>
+  handleSubmit: (e: React.FormEvent) => void
+}
+
+const TimeEntryForm: React.FC<TimeEntryFormProps> = ({ 
+  entry, 
+  setEntry, 
+  editingId, 
+  setEditingId, 
+  handleSubmit 
+}) => (
   <form onSubmit={handleSubmit} className="space-y-4">
     <div>
       <Label htmlFor="date">Date</Label>

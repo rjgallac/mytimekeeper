@@ -36,9 +36,9 @@ const TimeEntriesList: React.FC<TimeEntriesListProps> = ({
     <div className="mt-8">
       <h2 className="text-2xl font-semibold mb-4">Entries</h2>
       <div className="flex justify-between items-center mb-4">
-        <Button onClick={prevWeek} variant="outline" size="sm">&larr; Previous week</Button>
+        <Button onClick={prevWeek} variant="green" size="sm">&larr; Previous week</Button>
         <span className="text-sm text-muted-foreground">Week starting {new Date(weekStart).toLocaleDateString()}</span>
-        <Button onClick={nextWeek} variant="outline" size="sm">Next week &rarr;</Button>
+        <Button onClick={nextWeek} variant="green" size="sm">Next week &rarr;</Button>
       </div>
 
       <div className="overflow-x-auto">

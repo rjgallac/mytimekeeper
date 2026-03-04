@@ -89,11 +89,11 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
       />
     </div>
     <div className="flex gap-2">
-      <Button type="submit">{editingId ? 'Update' : 'Save'}</Button>
+      <Button type="submit" variant="blue">{editingId ? 'Update' : 'Save'}</Button>
       {editingId && (
         <Button 
           type="button" 
-          variant="outline"
+          variant="secondary"
           onClick={() => setEditingId(null)}
         >
           Cancel

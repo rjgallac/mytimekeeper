@@ -8,7 +8,13 @@ import { useEntries } from '@/hooks/useEntries'
 import { FormHookResult, EntriesHookResult, TimeEntry } from '@/types'
 
 const App: React.FC = () => {
-  const [weekStart, setWeekStart] = useState<string>(new Date().toISOString().split('T')[0])
+  const [weekStart, setWeekStart] = useState<string>(() => {
+    const today = new Date()
+    const day = today.getDay() // 0 = Sunday, 1 = Monday, etc.
+    const diff = today.getDate() - day // Subtract days since last Sunday
+    const sunday = new Date(today.setDate(diff))
+    return sunday.toISOString().split('T')[0]
+  })
   
   const { entry, setEntry, editingId, setEditingId, resetForm, handleEdit }: FormHookResult = useForm()
   const { entries, loading, addEntry, updateEntry, deleteEntry }: EntriesHookResult = useEntries(weekStart)
@@ -53,6 +59,8 @@ const App: React.FC = () => {
             setEntry={setEntry}
             editingId={editingId}
             setEditingId={setEditingId}
+            resetForm={resetForm}
+            handleEdit={handleEdit}
             handleSubmit={handleSubmit}
           />
 

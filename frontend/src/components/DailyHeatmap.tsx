@@ -70,38 +70,47 @@ export const DailyHeatmap: React.FC = () => {
     const startDate = new Date(currentYear, 0, 1)
     const endDate = new Date(currentYear, 11, 31)
     
-    let firstDay = new Date(startDate)
-    while (firstDay.getDay() !== 0) {
-      firstDay.setDate(firstDay.getDate() - 1)
+    // Find the Sunday on or before Jan 1
+    let firstWeekStart = new Date(startDate)
+    const dayOfWeek = firstWeekStart.getDay()
+    if (dayOfWeek !== 0) {
+      firstWeekStart.setDate(firstWeekStart.getDate() - dayOfWeek)
     }
     
+    console.log('First week start:', firstWeekStart.toISOString(), 'Day of week:', firstWeekStart.getDay())
+    
     const weeks: React.ReactNode[][] = []
-    let currentWeekStart = new Date(firstDay)
+    let currentWeekStart = new Date(firstWeekStart)
     
     while (currentWeekStart <= endDate || !weeks.some(w => w[6])) {
       const weekDays: React.ReactNode[] = []
       
       for (let i = 0; i < 7; i++) {
-        const dayDate = new Date(currentWeekStart)
-        dayDate.setDate(currentWeekStart.getDate() + i)
+        const dayDate = new Date(currentWeekStart.getTime())
+        dayDate.setDate(dayDate.getDate() + i)
         
         if (dayDate > endDate) {
           weekDays.push(<div key={`end-${i}`} className="w-3" />)
+        } else if (dayDate < startDate) {
+          weekDays.push(<div key={`pre-${i}`} className="w-3 invisible" />)
         } else {
-          const isBeforeYearStart = dayDate < startDate
+          const dateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`
+          const hours = dailyHours[dateStr] || 0
+          const isToday = dayDate.toDateString() === new Date().toDateString()
           
           weekDays.push(
             <div
-              key={dayDate.toISOString()}
-              className={`w-3 h-3 rounded-sm ${isBeforeYearStart ? 'invisible' : getIntensityColor(dailyHours[dayDate.toISOString().split('T')[0]] || 0)}`}
-              title={isBeforeYearStart ? '' : `${dayDate.toISOString().split('T')[0]}: ${(dailyHours[dayDate.toISOString().split('T')[0]] || 0).toFixed(1)} hours`}
+              key={dateStr}
+              className={`w-3 h-3 rounded-sm ${getIntensityColor(hours)} ${isToday ? 'ring-1 ring-black' : ''}`}
+              title={`${dateStr}: ${hours.toFixed(1)} hours`}
             />
           )
         }
       }
       
+      console.log('Week start:', currentWeekStart.toISOString(), 'Day of week:', currentWeekStart.getDay())
       weeks.push(weekDays)
-      currentWeekStart = new Date(currentWeekStart)
+      currentWeekStart = new Date(currentWeekStart.getTime())
       currentWeekStart.setDate(currentWeekStart.getDate() + 7)
     }
     

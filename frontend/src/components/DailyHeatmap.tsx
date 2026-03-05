@@ -27,7 +27,9 @@ export const DailyHeatmap: React.FC = () => {
 
         const hoursByDate: DailyData = {}
         response.data.forEach((entry: any) => {
-          const dateStr = entry.date
+          const dateObj = new Date(entry.date)
+          const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`
+          
           const morningHours = entry.morning_start && entry.morning_end
             ? (new Date('1970-01-01T' + entry.morning_end + 'Z').getTime() - new Date('1970-01-01T' + entry.morning_start + 'Z').getTime()) / 3600000
             : 0

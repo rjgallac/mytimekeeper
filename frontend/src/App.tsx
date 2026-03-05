@@ -8,6 +8,7 @@ import WeeklyProgress from '@/components/WeeklyProgress'
 import { useForm } from '@/hooks/useForm'
 import { useEntries } from '@/hooks/useEntries'
 import { FormHookResult, EntriesHookResult, TimeEntry } from '@/types'
+import { DailyHeatmap } from './components/DailyHeatmap'
 
 const App: React.FC = () => {
   const [weekStart, setWeekStart] = useState<string>(() => {
@@ -63,8 +64,7 @@ const App: React.FC = () => {
             handleEdit={handleEdit}
             handleDelete={handleDelete}
           />
-           <YearlyProgress year={new Date(weekStart).getFullYear()} />
-          <WeeklyProgress weekStart={weekStart} /> 
+          <DailyHeatmap />
 
           <TimeEntryForm 
             entry={entry}

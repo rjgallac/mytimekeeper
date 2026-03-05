@@ -4,7 +4,7 @@ import { TimeEntryFormState, FormHookResult, TimeEntry } from '@/types'
 export const useForm = (): FormHookResult => {
   const [entry, setEntry] = useState<TimeEntryFormState>({
     date: new Date().toISOString().split('T')[0],
-    morningStart: '09:00',
+    morningStart: '08:30',
     morningEnd: '12:00',
     afternoonStart: '13:00',
     afternoonEnd: '17:00',
@@ -16,7 +16,7 @@ export const useForm = (): FormHookResult => {
   const resetForm = useCallback(() => {
     setEntry({
       date: new Date().toISOString().split('T')[0],
-      morningStart: '09:00',
+      morningStart: '08:30',
       morningEnd: '12:00',
       afternoonStart: '13:00',
       afternoonEnd: '17:00',
@@ -29,7 +29,7 @@ export const useForm = (): FormHookResult => {
   const handleEdit = useCallback((item: TimeEntry) => {
     setEntry({
       date: item.date.slice(0, 10),
-      morningStart: item.morning_start || '09:00',
+      morningStart: item.morning_start || '08:30',
       morningEnd: item.morning_end || '12:00',
       afternoonStart: item.afternoon_start || '13:00',
       afternoonEnd: item.afternoon_end || '17:00',

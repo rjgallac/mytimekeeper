@@ -33,7 +33,7 @@ const TimeEntriesList: React.FC<TimeEntriesListProps> = ({
   const weekTotal = entries.reduce((sum, it) => sum + dailyMinutes(it), 0)
 
   return (
-    <div className="mt-8">
+    <div className="">
       <h2 className="text-2xl font-semibold mb-4">Entries</h2>
       <div className="flex justify-between items-center mb-4">
         <Button onClick={prevWeek} variant="green" size="sm">&larr; Previous week</Button>
@@ -58,14 +58,15 @@ const TimeEntriesList: React.FC<TimeEntriesListProps> = ({
             {entries.map((item: TimeEntry, index: number) => (
               <tr key={item.id ?? `temp-${index}-${item.date}`} className="border-b hover:bg-accent">
                 <td className="py-2 px-4">
-                  {new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' })} 
+                  {new Date(item.date).toLocaleDateString('en-GB', { weekday: 'short' })} 
+                  &nbsp;
                   {item.date.slice(0, 10)}
                 </td>
                 <td className="py-2 px-4">
-                  {item.morning_start || ''} - {item.morning_end || ''}
+                  {item.morning_start?.slice(0,5) || ''} - {item.morning_end?.slice(0,5) || ''}
                 </td>
                 <td className="py-2 px-4">
-                  {item.afternoon_start || ''} - {item.afternoon_end || ''}
+                  {item.afternoon_start?.slice(0,5) || ''} - {item.afternoon_end?.slice(0,5) || ''}
                 </td>
                 <td className="py-2 px-4">
                   {formatDuration(dailyMinutes(item))}

@@ -56,8 +56,15 @@ const App: React.FC = () => {
           <CardDescription>Track your daily hours and manage your time effectively</CardDescription>
         </CardHeader>
         <CardContent>
-          <YearlyProgress year={new Date(weekStart).getFullYear()} />
-          <WeeklyProgress weekStart={weekStart} />
+           <TimeEntriesList 
+            entries={entries}
+            weekStart={weekStart}
+            setWeekStart={setWeekStart}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+          />
+           <YearlyProgress year={new Date(weekStart).getFullYear()} />
+          <WeeklyProgress weekStart={weekStart} /> 
 
           <TimeEntryForm 
             entry={entry}
@@ -69,13 +76,7 @@ const App: React.FC = () => {
             handleSubmit={handleSubmit}
           />
 
-          <TimeEntriesList 
-            entries={entries}
-            weekStart={weekStart}
-            setWeekStart={setWeekStart}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-          />
+         
         </CardContent>
       </Card>
     </div>

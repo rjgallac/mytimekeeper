@@ -20,17 +20,17 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
   handleSubmit 
 }) => (
   <form onSubmit={handleSubmit} className="space-y-4">
-    <div>
-      <Label htmlFor="date">Date</Label>
-      <Input 
-        id="date"
-        type="date" 
-        value={entry.date} 
-        onChange={(e) => setEntry({...entry, date: e.target.value})}
-        required 
-      />
-    </div>
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-6 gap-4">
+      <div className="col-span-6 sm:col-span-2">
+        <Label htmlFor="date">Date</Label>
+        <Input 
+          id="date"
+          type="date" 
+          value={entry.date} 
+          onChange={(e) => setEntry({...entry, date: e.target.value})}
+          required 
+        />
+      </div>
       <div>
         <Label htmlFor="morningStart">Morning start</Label>
         <Input 
@@ -49,8 +49,6 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           onChange={(e) => setEntry({...entry, morningEnd: e.target.value})}
         />
       </div>
-    </div>
-    <div className="grid grid-cols-2 gap-4">
       <div>
         <Label htmlFor="afternoonStart">Afternoon start</Label>
         <Input 
@@ -69,8 +67,9 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           onChange={(e) => setEntry({...entry, afternoonEnd: e.target.value})}
         />
       </div>
+      <div></div>
     </div>
-    <div>
+    {/* <div>
       <Label htmlFor="comment">Comment</Label>
       <Textarea 
         id="comment"
@@ -87,7 +86,7 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
         onChange={(e) => setEntry({...entry, tasks: e.target.value})}
         placeholder="List your tasks..."
       />
-    </div>
+    </div> */}
     <div className="flex gap-2">
       <Button type="submit" variant="blue">{editingId ? 'Update' : 'Save'}</Button>
       {editingId && (

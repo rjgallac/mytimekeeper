@@ -1,55 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 interface YearlyProgressProps {
-  year: number
+  year: number;
 }
 
-const WEEKLY_TARGET = 37.5
-const TOTAL_BLOCKS = 52
+const WEEKLY_TARGET = 37.5;
+const TOTAL_BLOCKS = 52;
 
 export const YearlyProgress: React.FC<YearlyProgressProps> = ({ year }) => {
-  const [weeklyHours, setWeeklyHours] = useState<{ [key: string]: number }>({})
-  const [loading, setLoading] = useState(true)
+  const [weeklyHours, setWeeklyHours] = useState<{ [key: string]: number }>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        setLoading(true)
-        const response = await axios.get('http://localhost:3001/api/yearly-summary', {
-          params: { year }
-        })
-        setWeeklyHours(response.data.weeklyHours || {})
+        setLoading(true);
+        const response = await axios.get("/api/yearly-summary", {
+          params: { year },
+        });
+        setWeeklyHours(response.data.weeklyHours || {});
       } catch (error) {
-        console.error('Error fetching yearly summary:', error)
-        setWeeklyHours({})
+        console.error("Error fetching yearly summary:", error);
+        setWeeklyHours({});
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchSummary()
-  }, [year])
+    fetchSummary();
+  }, [year]);
 
   if (loading) {
-    return <div className="mt-4 text-sm text-muted-foreground">Loading...</div>
+    return <div className="mt-4 text-sm text-muted-foreground">Loading...</div>;
   }
 
-  const blocks = []
-  
+  const blocks = [];
+
   for (let i = 0; i < TOTAL_BLOCKS; i++) {
-    let colorClass = 'bg-gray-100' // blank - no data
-    
-    const weekStartKey = new Date(year, 0, 1 + i * 7).toISOString().split('T')[0]
-    const hours = weeklyHours[weekStartKey]
+    let colorClass = "bg-gray-100"; // blank - no data
+
+    const weekStartKey = new Date(year, 0, 1 + i * 7)
+      .toISOString()
+      .split("T")[0];
+    const hours = weeklyHours[weekStartKey];
 
     if (hours !== undefined && hours !== null) {
       if (hours < WEEKLY_TARGET - 2) {
-        colorClass = 'bg-green-300' // under target (light green)
+        colorClass = "bg-green-300"; // under target (light green)
       } else if (hours >= WEEKLY_TARGET - 2 && hours <= WEEKLY_TARGET + 2) {
-        colorClass = 'bg-green-500' // on target (green)
+        colorClass = "bg-green-500"; // on target (green)
       } else {
-        colorClass = 'bg-green-700' // over target (dark green)
+        colorClass = "bg-green-700"; // over target (dark green)
       }
     }
 
@@ -57,9 +59,9 @@ export const YearlyProgress: React.FC<YearlyProgressProps> = ({ year }) => {
       <div
         key={i}
         className={`w-2 h-4 rounded-sm ${colorClass}`}
-        title={`Week ${i + 1}: ${hours !== undefined ? hours.toFixed(1) : 'No data'} hrs`}
-      />
-    )
+        title={`Week ${i + 1}: ${hours !== undefined ? hours.toFixed(1) : "No data"} hrs`}
+      />,
+    );
   }
 
   return (
@@ -84,7 +86,7 @@ export const YearlyProgress: React.FC<YearlyProgressProps> = ({ year }) => {
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default YearlyProgress
+export default YearlyProgress;

@@ -1,56 +1,59 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 interface WeeklyProgressProps {
-  weekStart: string
+  weekStart: string;
 }
 
-const WEEKLY_TARGET = 37.5
-const BLOCKS_PER_DAY = 2 // Assuming 2 blocks per day (morning/afternoon) or similar granularity
-const TOTAL_BLOCKS = 52
+const WEEKLY_TARGET = 37.5;
+const BLOCKS_PER_DAY = 2; // Assuming 2 blocks per day (morning/afternoon) or similar granularity
+const TOTAL_BLOCKS = 52;
 
 const WeeklyProgress: React.FC<WeeklyProgressProps> = ({ weekStart }) => {
-  const [totalHours, setTotalHours] = useState<number | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [totalHours, setTotalHours] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        setLoading(true)
-        const response = await axios.get('http://localhost:3001/api/weekly-summary', {
-          params: { start: weekStart }
-        })
-        setTotalHours(response.data.totalHours || 0)
+        setLoading(true);
+        const response = await axios.get("/api/weekly-summary", {
+          params: { start: weekStart },
+        });
+        setTotalHours(response.data.totalHours || 0);
       } catch (error) {
-        console.error('Error fetching weekly summary:', error)
-        setTotalHours(null)
+        console.error("Error fetching weekly summary:", error);
+        setTotalHours(null);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchSummary()
-  }, [weekStart])
+    fetchSummary();
+  }, [weekStart]);
 
   if (loading) {
-    return <div className="mt-4 text-sm text-muted-foreground">Loading...</div>
+    return <div className="mt-4 text-sm text-muted-foreground">Loading...</div>;
   }
 
-  const blocks = []
-  const hoursPerBlock = WEEKLY_TARGET / TOTAL_BLOCKS
+  const blocks = [];
+  const hoursPerBlock = WEEKLY_TARGET / TOTAL_BLOCKS;
 
   for (let i = 0; i < TOTAL_BLOCKS; i++) {
-    let colorClass = 'bg-gray-200' // blank - no data
+    let colorClass = "bg-gray-200"; // blank - no data
 
     if (totalHours !== null) {
-      const accumulatedHours = (i + 1) * hoursPerBlock
-      
+      const accumulatedHours = (i + 1) * hoursPerBlock;
+
       if (accumulatedHours <= totalHours * 0.95) {
-        colorClass = 'bg-green-600' // over target (dark green)
-      } else if (accumulatedHours >= totalHours * 1.05 && accumulatedHours <= WEEKLY_TARGET) {
-        colorClass = 'bg-green-400' // under target (light green)
+        colorClass = "bg-green-600"; // over target (dark green)
+      } else if (
+        accumulatedHours >= totalHours * 1.05 &&
+        accumulatedHours <= WEEKLY_TARGET
+      ) {
+        colorClass = "bg-green-400"; // under target (light green)
       } else {
-        colorClass = 'bg-green-500' // on target (green)
+        colorClass = "bg-green-500"; // on target (green)
       }
     }
 
@@ -59,8 +62,8 @@ const WeeklyProgress: React.FC<WeeklyProgressProps> = ({ weekStart }) => {
         key={i}
         className={`w-3 h-3 rounded-sm ${colorClass}`}
         title={`Block ${i + 1}: ${(totalHours !== null ? hoursPerBlock : 0).toFixed(1)} hrs`}
-      />
-    )
+      />,
+    );
   }
 
   return (
@@ -88,7 +91,7 @@ const WeeklyProgress: React.FC<WeeklyProgressProps> = ({ weekStart }) => {
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WeeklyProgress
+export default WeeklyProgress;

@@ -40,7 +40,7 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           <Input
             id="morningStart"
             type="time"
-            value={entry.morning_start || ""}
+            value={entry.morningStart || ""}
             onChange={(e) =>
               setEntry({ ...entry, morningStart: e.target.value })
             }
@@ -51,7 +51,7 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           <Input
             id="morningEnd"
             type="time"
-            value={entry.morning_end || ""}
+            value={entry.morningEnd || ""}
             onChange={(e) => setEntry({ ...entry, morningEnd: e.target.value })}
           />
         </div>
@@ -62,7 +62,7 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           <Input
             id="afternoonStart"
             type="time"
-            value={entry.afternoon_start || ""}
+            value={entry.afternoonStart || ""}
             onChange={(e) =>
               setEntry({ ...entry, afternoonStart: e.target.value })
             }
@@ -73,7 +73,7 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           <Input
             id="afternoonEnd"
             type="time"
-            value={entry.afternoon_end || ""}
+            value={entry.afternoonEnd || ""}
             onChange={(e) =>
               setEntry({ ...entry, afternoonEnd: e.target.value })
             }

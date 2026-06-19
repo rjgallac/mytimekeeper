@@ -26,7 +26,7 @@ The UI lets you enter date, times, comments, and tasks. It posts to `/api/entrie
 
 > You can run a Docker Postgres container:
 > ```
-> docker run --name timekeeper-db -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+> docker run --name timekeeper-db -e POSTGRES_PASSWORD=password -e MYSQL_DATABASE=timekeeper -p 5432:5432 -d postgres
 > ```
 
 
@@ -50,4 +50,3 @@ docker exec -i $(docker ps -qf "name=mytimekeeper_db") psql -U postgres -d timek
 ```
 
 or simply use a local `psql` client against the mapped port.
-

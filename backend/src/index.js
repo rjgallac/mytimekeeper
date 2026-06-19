@@ -9,7 +9,10 @@ const LocalStrategy = require("passport-local").Strategy;
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173", // default vite port
+    origin: [
+      "http://localhost:5173",
+      "https://timekeeper.sheffieldwebprogrammer.co.uk",
+    ],
     credentials: true,
   }),
 );

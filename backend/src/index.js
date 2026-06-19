@@ -93,6 +93,11 @@ app.post("/api/login", (req, res, next) => {
   })(req, res, next);
 });
 
+// Get current user info
+app.get("/api/me", (req, res) => {
+  res.json({ id: req.user.id, username: req.user.username });
+});
+
 // Apply authentication to all api routes
 app.use("/api", isAuthenticated);
 

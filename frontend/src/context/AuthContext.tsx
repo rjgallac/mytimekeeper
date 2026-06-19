@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import axios from "axios";
 
 interface User {
   id: number;
@@ -16,7 +22,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,11 +32,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // We can try to fetch some protected data or a simple "me" endpoint
-        // if it existed. For now, we'll rely on the login attempt to set state.
-        // In a real app, you'd have an /api/me endpoint.
-        setLoading(false);
+        const response = await axios.get("/api/me", { withCredentials: true });
+        setUser(response.data);
       } catch (error) {
+        setUser(null);
+      } finally {
         setLoading(false);
       }
     };
@@ -37,16 +45,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/login',
+      const response = await axios.post(
+        "/api/login",
         { username, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setUser(response.data);
     } catch (error: any) {
       if (error.response && error.response.data) {
-        throw new Error(error.response.data.error || 'Login failed');
+        throw new Error(error.response.data.error || "Login failed");
       }
-      throw new Error('Login failed');
+      throw new Error("Login failed");
     }
   };
 
@@ -58,7 +67,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const isAuthenticated = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -67,7 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

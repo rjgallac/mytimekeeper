@@ -87,13 +87,6 @@ export const DailyHeatmap: React.FC = () => {
       firstWeekStart.setDate(firstWeekStart.getDate() - dayOfWeek);
     }
 
-    console.log(
-      "First week start:",
-      firstWeekStart.toISOString(),
-      "Day of week:",
-      firstWeekStart.getDay(),
-    );
-
     const weeks: React.ReactNode[][] = [];
     let currentWeekStart = new Date(firstWeekStart);
 
@@ -122,13 +115,6 @@ export const DailyHeatmap: React.FC = () => {
           );
         }
       }
-
-      console.log(
-        "Week start:",
-        currentWeekStart.toISOString(),
-        "Day of week:",
-        currentWeekStart.getDay(),
-      );
       weeks.push(weekDays);
       currentWeekStart = new Date(currentWeekStart.getTime());
       currentWeekStart.setDate(currentWeekStart.getDate() + 7);

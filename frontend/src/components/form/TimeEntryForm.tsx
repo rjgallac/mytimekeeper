@@ -30,7 +30,9 @@ const TimeEntryForm: React.FC<TimeEntryFormProps> = ({
           id="date"
           type="date"
           value={entry.date}
-          onChange={(e) => setEntry({ ...entry, date: e.target.value })}
+          onChange={(e) => {
+            setEntry({ ...entry, date: e.target.value });
+          }}
           required
         />
       </div>

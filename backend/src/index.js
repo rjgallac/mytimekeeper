@@ -65,6 +65,7 @@ const pool = new Pool({
   connectionString:
     process.env.DATABASE_URL ||
     "postgresql://postgres:password@localhost:5432/timekeeper",
+  timezone: "UTC",
 });
 
 // ensure table exists

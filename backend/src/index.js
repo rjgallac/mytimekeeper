@@ -97,13 +97,13 @@ app.post("/api/login", (req, res, next) => {
   })(req, res, next);
 });
 
+// Apply authentication to all api routes (except login)
+app.use("/api", isAuthenticated);
+
 // Get current user info
 app.get("/api/me", (req, res) => {
   res.json({ id: req.user.id, username: req.user.username });
 });
-
-// Apply authentication to all api routes
-app.use("/api", isAuthenticated);
 
 // Basic health check
 app.get("/", (req, res) => {
